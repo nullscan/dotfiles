@@ -1,0 +1,13 @@
+#indent-tab=4
+brackets=attach
+break-closing-brackets
+indent-classes
+indent-switches
+pad-paren-out
+pad-oper
+unpad-paren
+keep-one-line-statements
+keep-one-line-blocks
+preserve-date
+errors-to-stdout
+suffix=none

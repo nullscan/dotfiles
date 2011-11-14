@@ -1,0 +1,16 @@
+"mpc toggle"
+XF86AudioPlay
+"mpc next"
+XF86Forward
+"mpc prev"
+XF86Back
+"amixer set Master 5%+"
+XF86AudioRaiseVolume
+"amixer set Master 5%-"
+XF86AudioLowerVolume
+"amixer set Master toggle"
+XF86AudioMute
+"/opt/google/chrome/chrome"
+XF86HomePage
+"/opt/thunderbird/thunderbird"
+XF86Mail

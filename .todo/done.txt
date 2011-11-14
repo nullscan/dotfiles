@@ -1,0 +1,20 @@
+x 2009-05-04 Copy the OS and player tracking sources on the FC for dispatch to Xanthi
+x 2009-05-04 Install the latest image (update 14) provided by kernelconcepts for the IPT terminal and guide Vaggelis Rokos through the changes that were made on this update (i.e. software loading from internal flash memory instead of flash card etc.)
+x 2009-05-04 Finalize the production image for the Photon terminal. Currently, i still have to test the iButton (for which i received the instructions on Friday evening) and check why there are 2 serial ports less recognized by the OS
+x 2009-06-15 Checking of screen shot grabbing and bar code decoding library for IPT terminal as new versions of the OS and fswebcam application become available
+x 2009-06-24 Finalize file system checking daemon and begin initial testing before proceeding to integrate the daemon to software
+x 2010-03-19 Benchmark and testing of SSD powered testing terminal and performance monitoring
+x 2010-05-31 Finalize changes to OS for first installation on a terminal that uses Solid State Disk and begin to investigate optimal configuration and setup for speed and dependability
+x 2010-05-31 Gather data from first OS benchmark and stability testing
+x 2011-02-09 Create unified bootable USB stick with all kernel and filesystem setup data gathered from all terminals running the new gentoo OS. Create setup selection and configuration option running from USB stick and create the installation script for the selected setup
+x 2011-02-17 Download server (design decisions, package management layout, network capabilities investigation etc.)
+x 2011-02-25 MLOT xray new ICOM mlot and possibly restore image
+x 2011-03-04 AZERBIJAN modify progress bar and display completion percentage
+x 2011-03-08 SYSTEM hide all boot messages
+x 2011-03-08 NZ optic fiber speed monitoring  - IN PROGRESS
+x 2011-03-22 NM, check broken filesystem on HDD
+x 2011-04-18 PERU investigate application freeze
+x 2011-04-20 OPAP new CMOS data with usb keyboard enabled
+x 2011-05-03 AZ 20Gb disk boot failure
+x 2011-05-16 mLOT+ investigate why USB thumb drives fail to install new versions
+x 2011-05-16 OPAP new universal image for both coronis terminals

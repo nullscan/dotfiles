@@ -1,0 +1,67 @@
+xft.dpi:	              	96
+xft.hinting:              	slight
+
+Xcursor.theme:            	Comix-WSS
+Xcursor.size:             	22
+
+URxvt.font:			xft:MonteCarlo:size=11
+URxvt.boldFont:           	xft:MonteCarlo:size=11
+URxvt.italicFont:         	-*-montecarlo-medium-*-*-*-11-*-*-*-*-*-*-*
+URxvt.boldItalicFont:     	-*-montecarlo-medium-*-*-*-11-*-*-*-*-*-*-*
+URxvt.depth:			32
+rxvt.title: 				What is thy bidding, my Master
+
+URxvt*geometry:           	160x60
+URxvt*saveLines:          	16384
+URxvt*scrollBar:		false
+URxvt*scrollstyle:	      	plain
+!URxvt*scrollBar_right:	  	true
+!URxvt*loginShell:	        true
+!URxvt*borderLess:        	true
+URxvt*tintColor:          	#666666
+URxvt*termName:		        rxvt
+URxvt*inheritPixmap:	   	false
+URxvt*cutchars:		        "\"()*,<>[]{}|'"
+!URxvt*secondaryScroll:	  	true
+URxvt*perl-lib:		        /usr/lib/urxvt/perl/
+URxvt*perl-ext-common:	  	default,matcher
+URxvt*urlLauncher:	      	/opt/google/chrome/chrome
+URxvt*matcher.button:	    	1
+URxvt*matcher.pattern.1:	\\bwww\\.[\\w-]+\\.[\\w./?&@#-]*[\\w/-]
+URxvt*visualBell:	        false
+
+! Colors
+URxvt*cursorColor:        	#919191
+URxvt*cursorColor2:       	white
+URxvt*pointerColor:       	#919191
+
+!URxvt*background:         	rgba:0000/0000/0000/cccc
+URxvt*background:		black
+URxvt*foreground:         	white
+
+!! thayer bright
+!black
+*color0:                  	#222222
+*color8:                  	#555555
+!red
+*color1:                  	#ff3300
+*color9:                  	#ff6655
+!green
+*color2:                  	#99cc33
+*color10:                 	#ccff66
+!yellow
+*color3:                  	#bbbbcc
+*color11:                 	#ffffcc
+!blue -> violet
+*color4:                  	#6677ff
+*color12:                 	#6677ff
+!magenta -> pink
+*color5:			#ce5c00
+*color13:	                #f57900
+!cyan -> blue
+*color6:                  	#0066ff
+*color14:                 	#3399ff
+!white
+*color7:                  	#999999
+*color15:                 	#cccccc
+

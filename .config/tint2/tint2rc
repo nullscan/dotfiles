@@ -1,0 +1,110 @@
+#---------------------------------------------
+# TINT2 CONFIG FILE
+#---------------------------------------------
+
+#---------------------------------------------
+# BACKGROUND AND BORDER
+#---------------------------------------------
+rounded = 6
+border_width = 1
+background_color = #000000 0
+border_color = #296798 68
+
+rounded = 6
+border_width = 0
+background_color = #000000 0
+border_color = #810c0c 34
+
+rounded = 6
+border_width = 0
+background_color = #ffffff 14
+border_color = #810c0c 100
+
+rounded = 6
+border_width = 2
+background_color = #000000 0
+border_color = #296797 68
+
+rounded = 6
+border_width = 0
+background_color = #000000 0
+border_color = #800b0b 34
+
+rounded = 6
+border_width = 0
+background_color = #ffffff 14
+border_color = #800b0b 100
+
+#---------------------------------------------
+# PANEL
+#---------------------------------------------
+panel_monitor = all
+panel_position = bottom center horizontal
+panel_size = 1250 22
+panel_margin = 0 0
+panel_padding = 5 3 5
+font_shadow = 0
+panel_background_id = 1
+wm_menu = 0
+
+#---------------------------------------------
+# TASKBAR
+#---------------------------------------------
+taskbar_mode = multi_desktop
+taskbar_padding = 0 0 2
+taskbar_background_id = 0
+
+#---------------------------------------------
+# TASK
+#---------------------------------------------
+task_icon = 0
+task_text = 1
+task_maximum_size = 150 30
+task_centered = 1
+task_padding = 2 1
+task_font = montecarlo 7
+task_font_color = #ffffff 55
+task_active_font_color = #ffffff 65
+task_background_id = 2
+task_active_background_id = 3
+
+#---------------------------------------------
+# SYSTRAYBAR
+#---------------------------------------------
+systray_padding = 4 1 4
+systray_background_id = 1
+
+#---------------------------------------------
+# CLOCK
+#---------------------------------------------
+#time1_format = %H:%M
+time1_font = sans bold 8
+#time2_format = %A %d %B
+time2_font = sans 6
+clock_font_color = #ffffff 75
+clock_padding = 2 2
+clock_background_id = 0
+#clock_lclick_command = xclock
+clock_rclick_command = orage
+
+#---------------------------------------------
+# BATTERY
+#---------------------------------------------
+battery = 0
+battery_low_status = 0
+battery_low_cmd = (null)
+bat1_font = (null)
+bat2_font = (null)
+battery_font_color = #000000 0
+battery_padding = 2 2
+battery_background_id = 0
+
+#---------------------------------------------
+# MOUSE ACTION ON TASK
+#---------------------------------------------
+mouse_middle = none
+mouse_right = close
+mouse_scroll_up = toggle
+mouse_scroll_down = iconify
+
+

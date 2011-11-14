@@ -1,0 +1,54 @@
+#avoid flicker
+double_buffer yes
+no_buffers yes
+background yes
+ 
+#own window to run simultanious 2 or more conkys
+own_window yes
+own_window_type normal
+own_window_transparent yes
+own_window_hints undecorate,below,sticky,skip_taskbar,skip_pager
+ 
+#borders
+draw_borders no
+border_margin 0
+draw_outline no
+draw_borders no
+border_width 0
+ 
+#shades
+draw_shades no
+
+#position
+#gap_x 1285
+gap_y 1
+alignment top_right
+ 
+#behaviour
+update_interval 4
+
+cpu_avg_samples 2
+net_avg_samples 2
+ 
+#colour
+default_color 8F8F8F
+color0 707070
+ 
+#default_shade_color 000000
+own_window_colour 474747
+ 
+#font
+uppercase no
+use_xft yes
+#xftfont terminus:pixelsize=10
+xftfont profont:pixelsize=12
+#xftfont Bauhaus Lt BT:pixelsize=13
+ 
+#to prevent window from moving
+#minimum_size 500 
+text_buffer_size 5120
+maximum_width 450
+use_spacer no
+TEXT
+TODO
+${execi 3600 /home/jpoly/proggies/todo -d /home/jpoly/.todorc ls | fold -w 75 -s}

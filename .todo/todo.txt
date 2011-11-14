@@ -1,0 +1,7 @@
+NL organize stress test (reboot) for terminal freeze  - IN PROGRESS
+INTERNAL create project time tracking script that will report time spent on each project
+SYSTEM organize new system layout with groups for each application and remove root access from all
+DownServer followup on download server design decisions and create developers layout
+SYSTEM create on Photon a sample layout with encrypted disks (unlocked from initrd) and file system check daemon installed
+SYSTEM create universal coronis_main script that handles everything
+PHOTON,VT Fix issue with touchscreen calibration and Horizon.

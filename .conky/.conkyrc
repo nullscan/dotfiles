@@ -1,0 +1,88 @@
+minimum_size 390 120
+maximum_width 390
+background yes
+gap_x 1285
+gap_y 40
+border_width 5
+cpu_avg_samples 2
+imlib_cache_size 0
+override_utf8_locale yes
+double_buffer yes
+draw_borders no
+draw_graph_borders no
+draw_outline no
+draw_shades no
+max_user_text 20000
+net_avg_samples 2
+no_buffers yes
+override_utf8_locale yes
+own_window yes
+own_window_colour 000000    # Black
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+own_window_transparent yes
+own_window_type normal
+pad_percents 2
+short_units yes
+stippled_borders 3
+text_buffer_size 8000
+total_run_times 0
+update_interval 1.0
+uppercase no
+use_spacer right
+use_xft yes
+xftalpha 0.75
+mpd_host localhost
+mpd_port 6600
+xftfont profont:pixelsize=12
+color0 555555            #
+color1 483D8B            # Dark Slate Blue
+color2 B8860B            # Dark goldenrod
+color3 4682B4            # Steelblue
+color4 8B0000            # Dark red
+color5 008080            # Teal
+color6 778899            # Light slate gray
+color7 8888CC            #  (COOL)
+color8 CCCC88            #  (WARM)
+color9 CC8888            #  (HOT)
+lua_load ~/.conky/core_rings.lua
+lua_draw_hook_pre ring_stats
+
+# ======= Clock =======
+template1 ${execpi 60 ~/.conky/conkycalender.sh}
+
+# ====== Core Systems =======
+template2 Core Systems ${color1}${hr 1}${color}\n${cpugraph cpu0 45,200 000033 4682B4}
+
+# ======= Memory =======
+template3 ${execp ~/.conky/conkymemory.sh}
+
+# ======= HDDs =======
+template4 ${execpi 60 ~/.conky/conkydevices.sh}
+
+# ======= Network =======
+template5 ${execp ~/.conky/conkynetwork.sh}
+
+# ======= Weather =======
+template6 ${execpi 60 conkyForecast --location=GRXX0004 --template=/home/jpoly/.conky/conkyForecast.template}
+
+# ======= MPD =======
+template7 ${voffset 20}${goto 200}${color3}${mpd_elapsed} / ${mpd_length}${color}\n${goto 200}${color3}${mpd_bar 5,200}${color}\n\n${goto 200}${color3}${scroll 26 3 ${mpd_smart}}${color}\n\n${font}${color}${goto 200}Album: ${color3}${mpd_album 29}${color}\n\n${goto 200}Bitate: ${color3}${mpd_bitrate}kbps${color}
+
+# ======= Upcomming events =======
+template8 ${execpi 3600 ~/.conky/conkyupcomming.sh}
+
+TEXT
+${template1}
+
+${template2}
+${template3}
+${template4}
+${template5}
+${template6}
+MPD ${if_mpd_playing}${if_match "${mpd_status}"=="Paused"}[ Paused ] ${color1}${hr 1}${color}\n${else}${color1}${hr 1}${color}\n${endif}${if_existing /tmp/cover}${image /tmp/cover -p 5,760 -s 160x144}${template7}${else}${image ~/.conky/images/cover_bg.png -p 5,760 -s 160x144}${template7}${endif}${else}[ Stopped ] ${color1}${hr 1}${color}\n${image ~/.conky/images/cover_bg.png -p 5,760 -s 160x144}${template7}${endif}${image ~/.conky/images/cover_overlay.png -p 5,760 -s 160x144}
+
+
+
+
+
+${template8}

@@ -1,0 +1,20 @@
+Weather is [--datatype=CT]${color1}${hr 1}${color}
+${image [--datatype=BI] -p 85,515 -s 45x45}${image [--datatype=WI] -p 170,515 -s 45x45}${image [--datatype=MI] -p 265,515 -s 45x45}
+
+
+
+
+${goto 65}${color4}Wind: ${color}[--datatype=WS --imperial] - [--datatype=WD]${color4}${goto 240}${color4}Moon Phase: ${color}[--datatype=MP]
+${goto 65}${color4}Temp: ${color}[--datatype=HT --hideunits --centeredwidth=4]${goto 240}${color4}Rain: ${color}[--datatype=PC --startday=0 --centeredwidth=4]
+${goto 65}${color4}Feels like: ${color}[--datatype=LT --hideunits --centeredwidth=4]${goto 240}${color4}Humidity: ${color}[--datatype=HM --centeredwidth=4]
+${goto 65}${color4}High: ${color}[--datatype=HT --hideunits --startday=0 --centeredwidth=4]${goto 240}${color4}Dew Point: ${color}[--datatype=DP --hideunits --centeredwidth=4]
+${goto 65}${color4}Low: ${color}[--datatype=LT --startday=0 --hideunits --centeredwidth=4]${goto 240}${color4}UV: ${color}[--datatype=UI] - [--datatype=UT]
+${goto 65}${color4}Sunrise: ${color}[--datatype=SR]${goto 240}${color4}Sunset: ${color}[--datatype=SS]
+${goto 65}${color4}Pressure: ${color}[--datatype=BR] - [--datatype=BD]
+
+    4 Day Forecast
+${goto 55}[--datatype=DW --startday=1 --shortweekday]${goto 115}[--datatype=DW --startday=2 --shortweekday]${goto 175}[--datatype=DW --startday=3 --shortweekday]${goto 235}[--datatype=DW --startday=4 --shortweekday]
+${image [--datatype=WI --startday=1] -p 36,678 -s 36x36}${image [--datatype=WI --startday=2] -p 96,678 -s 36x36}${image [--datatype=WI --startday=3] -p 156,678 -s 36x36}${image [--datatype=WI --startday=4] -p 215,678 -s 36x36}
+
+
+${goto 44}[--datatype=HT --startday=1 --hideunits]/[--datatype=LT --startday=1 --hideunits]${goto 103}[--datatype=HT --startday=2 --hideunits]/[--datatype=LT --startday=2 --hideunits]${goto 163}[--datatype=HT --startday=3 --hideunits]/[--datatype=LT --startday=3 --hideunits]${goto 224}[--datatype=HT --startday=4 --hideunits]/[--datatype=LT --startday=4 --hideunits]

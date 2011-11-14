@@ -1,0 +1,582 @@
+#####################################################################
+#  File:        .tcshrc
+#  Author:      Justin Randall (jrandall AT gmail DOT com)
+#  Created:     Fri Oct 14 09:00 AM 2001 EDT
+#  Last Change: Wed Nov 30 10:00 AM 2005 EST
+#  Discription: Initial setup file for both interactive tcsh and 
+#               noninteractive csh C-Shells. Environment variables 
+#               are typically passed to all commands and programs 
+#               run from within the current shell. 
+#             ,
+#           __)\_
+#     (\_.-'    a`-.
+#     (/~~````(/~^^`
+#####################################################################
+
+# Default umask rw-r--r--
+umask 022
+
+# Don't beep at all... beeping is annoying!
+set nobeep
+
+# Do autolisting of commands while completing.
+set autolist
+
+# Corrects spelling and capitalization
+set autocorrect
+
+# Enabled "complete" to "enhance".
+# If you have a file called "complete.tcsh" and you
+# want to edit it, do "vi c.t<TAB>" and that's it.
+set complete=enhance
+set noglob 
+    # Set hosts for complete of network commands from /etc/hosts
+	# and from saved SSH hosts if they exist in your home directory. 
+    set hosts=(`awk '/^[1-9].*/ {print $2'} /etc/hosts` \
+			`/bin/cat /home/jpoly/.ssh/config | grep "Host " | awk '{print $2}'`)
+#	if ( -r $HOME/.ssh/known_hosts ) then
+#		set f=`cat $HOME/.ssh/known_hosts | cut -f 1 -d \ ` >& /dev/null
+#		set hosts=($hosts $f)
+#		unset f
+#    endif
+    complete {rsh,ssh,rlogin,ping,traceroute,scp} p/1/\$hosts/ 
+    complete {finger,[M,m]ail} 'c/*@/$hosts/' 'p/1/u/@'
+    complete ftp	c/-/"(d i g n v)"/ n/-/\$hosts/ p/1/\$hosts/ n/*/n/
+    complete nslookup   p/1/x:'<host>'/ p/2/\$hosts/
+    complete xhost	c/[+-]/\$hosts/ n/*/\$hosts/
+	complete {,un}alias	'p/1/a/' 'p/2/c/'
+    complete bindkey 'C/*/b/'
+    complete env 'c/*=/f/' 'p/1/e/=/' 'p/2/c/'
+    complete {fg,bg,stop}	c/%/j/ p/1/"(%)"//
+    complete {,un}limit	c/-/"(h)"/ n/*/l/
+    complete {,un}setenv	'p/1/e/' 'c/*:/f/'
+    complete {,un}set	'c/*=/f/' 'p/1/s/=' 'n/=/f/'
+   	complete {c,push,pop}d	'C/*/d/'
+	complete {man,which,where,whereis}	'C/*/c/'
+    complete kill	    'c/-/S/' 'p/1/(-)//' 'c/%/j/' \
+			'n/*/`ps -u $LOGNAME | awk '"'"'{print $1}'"'"'`/'
+    complete find 	n/-fstype/"(nfs 4.2)"/ n/-name/f/ \
+		  	n/-type/"(c b d f p l s)"/ n/-user/u/ n/-group/g/ \
+			n/-exec/c/ n/-ok/c/ n/-cpio/f/ n/-ncpio/f/ n/-newer/f/ \
+		  	c/-/"(fstype name perm prune type user nouser \
+		  	group nogroup size inum atime mtime ctime exec \
+			ok print ls cpio ncpio newer xdev depth \
+			daystart follow maxdepth mindepth noleaf version \
+			anewer cnewer amin cmin mmin true false uid gid \
+			ilname iname ipath iregex links lname empty path \
+			regex used xtype fprint fprint0 fprintf \
+			print0 printf not a and o or)"/ \
+			n/*/d/
+    complete ifconfig	'p@1@`ifconfig -l`@' 'n/*/(range phase link netmask \
+			mtu vlandev vlan metric mediaopt down delete \
+			broadcast arp debug)/'
+    complete bunzip2	'p/*/f:*.bz2/'
+    complete bzip2	    'n/-9/f:^*.bz2/' 'n/-d/f:*.bz2/'
+    complete gzip	c/--/"(stdout to-stdout decompress uncompress \
+			force help list license no-name quiet recurse \
+			suffix test verbose version fast best)"/ \
+			c/-/"(c d f h l L n q r S t v V 1 2 3 4 5 6 7 8 9 -)"/\
+			n/{-S,--suffix}/x:'<file_name_suffix>'/ \
+			n/{-d,--{de,un}compress}/f:*.{gz,Z,z,zip,taz,tgz}/ \
+			N/{-d,--{de,un}compress}/f:*.{gz,Z,z,zip,taz,tgz}/ \
+			n/*/f:^*.{gz,Z,z,zip,taz,tgz}/
+    complete gunzip c/--/"(stdout to-stdout force help list license \
+			no-name quiet recurse suffix test verbose version)"/ \
+			c/-/"(c f h l L n q r S t v V -)"/ \
+			n/{-S,--suffix}/x:'<file_name_suffix>'/ \
+			n/*/f:*.{gz,Z,z,zip,taz,tgz}/
+    complete {gtar,tar}	p/1/"(cvf tvf xf cvfz xzf xjf cjf)"/\
+			p/2/f:*.{tar,tar.{gz,Z,bz2},taz,tgz,tbz,tbz2}/\
+			c/[ctx]vf*/"(z O p B)"/ n/*/f/
+	complete mount c/-/"(a F m o O p r v V)"/ n/-p/n/ n/-v/n/ \
+    		n/-o/x:'<FSType_options>'/ \
+    		n@-F@'`\ls -1 /usr/lib/fs`'@ \
+    		n@*@'`grep -v "^#" /etc/fstab | tr -s " " "	 " | cut -f 3`'@
+    complete umount	c/-/"(a o V)"/ n/-o/x:'<FSType_options>'/ \
+    		n/*/'`mount | cut -d " " -f 1`'/
+    complete dd c/--/"(help version)"/ c/[io]f=/f/ \
+            c/conv=*,/"(ascii ebcdic ibm block unblock \
+            lcase notrunc ucase swab noerror sync)"/,\
+            c/conv=/"(ascii ebcdic ibm block unblock \
+            lcase notrunc ucase swab noerror sync)"/, c/*=/x:'<number>'/ \
+            n/*/"(if of conv ibs obs bs cbs files skip file seek count)"/=
+    complete chown	c/--/"(changes dereference no-dereference silent \
+            quiet reference recursive verbose help version)"/ \
+			c/-/"(c f h R v -)"/ C@[./\$~]@f@ c/*[.:]/g/ \
+			n/-/u/: p/1/u/: n/*/f/
+    complete chgrp	c/--/"(changes no-dereference silent quiet reference \
+            recursive verbose help version)"/ \
+			c/-/"(c f h R v -)"/ n/-/g/ p/1/g/ n/*/f/
+    complete chmod	c/--/"(changes silent quiet verbose reference \
+            recursive help version)"/ c/-/"(c f R v)"/
+    complete df		c/--/"(all block-size human-readable si inodes \
+			kilobytes local megabytes no-sync portability sync \
+			type print-type exclude-type help version)"/ \
+			c/-/"(a H h i k l m P T t v x)"/
+    complete du		c/--/"(all block-size bytes total dereference-args \
+    		human-readable si kilobytes count-links dereference \
+			megabytes separate-dirs summarize one-file-system \
+			exclude-from exclude max-depth help version"/ \
+			c/-/"(a b c D H h k L l m S s X x)"/
+    complete cat	c/--/"(number-nonblank number squeeze-blank show-all \
+			show-nonprinting show-ends show-tabs help version)"/ \
+			c/-/"(A b E e n s T t u v -)"/ n/*/f/
+    complete mv		c/--/"(backup force interactive update verbose suffix \
+			version-control help version)"/ \
+			c/-/"(b f i S u V v -)"/ \
+			n/{-S,--suffix}/x:'<suffix>'/ \
+			n/{-V,--version-control}/"(t numbered nil existing \
+			never simple)"/ n/-/f/ N/-/d/ p/1/f/ p/2/d/ n/*/f/
+    complete cp		c/--/"(archive backup no-dereference force \
+    		interactive link preserve parents sparse recursive \
+			symbolic-link suffix update verbose version-control \
+			one-file-system help version)"/ \
+			c/-/"(a b d f i l P p R r S s u V v x -)"/ \
+			n/-*r/d/ n/{-S,--suffix}/x:'<suffix>'/ \
+			n/{-V,--version-control}/"(t numbered nil existing \
+			never simple)"/ n/-/f/ N/-/d/ p/1/f/ p/2/d/ n/*/f/
+    complete ln		c/--/"(backup directory force no-dereference \
+    		interactive symbolic suffix verbose version-control \
+			help version)"/ \
+			c/-/"(b d F f i n S s V v -)"/ \
+			n/{-S,--suffix}/x:'<suffix>'/ \
+			n/{-V,--version-control}/"(t numbered nil existing \
+			never simple)"/ n/-/f/ N/-/x:'<link_name>'/ \
+			p/1/f/ p/2/x:'<link_name>'/
+    complete touch	c/--/"(date reference time help version)"/ \
+			c/-/"(a c d f m r t -)"/ \
+			n/{-d,--date}/x:'<date_string>'/ \
+			c/--time/"(access atime mtime modify use)"/ \
+			n/{-r,--file}/f/ n/-t/x:'<time_stamp>'/ n/*/f/
+	complete {sudo} p/1/c/
+unset noglob 
+
+# Possible values: (cmd complete all). Put it to extreme auto.
+set correct=all
+
+# Don't want to be autologed out.
+# You would do: set autologout=3  for 3 minutes of inactivity.
+unset autologout
+
+# Limit the core dump size to zero
+limit coredumpsize 0
+
+# Symbolic links are expanded to their true values : chase
+# (possible values 'chase' 'ignore' 'expand')
+# When traversing directories with symlinks, this substitures
+# them with the real value.
+set symlinks=chase
+
+# After a 'Ctrl-Z', it lists all the jobs.
+set listjobs
+
+# Ask for confirmation when 'rm *'.
+set rmstar
+
+# Files that are to be ignored from completion.
+# The .o files that GCC produces. Usually you don't touch them.
+set fignore=(.o)
+
+# If the exit value is non-zero, print it. Handy for scripting.
+set printexitvalue
+
+# Type "ls" and hit F1. Will show a help line.  Once you
+# read the help, press "q" to quit the helpcommand
+alias helpcommand man
+
+# The tcpdump line is nice to see what traffic goes on the network
+# -s 2000  means to grab all the packet (max is about 1500, but anyway..)
+# -n  means do not resolve names. Makes it faster and lightweight.
+# -i eth0  means only the Ethernet interface. 
+alias log_tcpdump 'clear; exec tcpdump -s 2000 -n -i eth0'
+
+# Put the following on a free console and leave it there.
+# Even when the logs are circulating, it will carry on.
+# If someone kills this process, it automatically exits due to the "exec".
+alias log_messages 'clear; exec tail -f /var/log/messages --follow=name --retry'
+
+# Watch any(1) other users every 0 seconds from any(2) console,
+# when logging in/out.(I like this one!)
+# It gives something like "root has logged on tty1 from local."
+set watch=(0 any any)
+
+# Formatting of output string for who when someone logins or logouts.
+# It gives something like "root has logged on tty1 from local."
+set who="%n has %a %l from %m."
+
+# Set to 'insert' mode. Possible values 'insert' or 'overwrite'.
+set inputmode=insert
+
+# Various usage statistics set with the time command.
+# Do "man tcsh" to find about more data that can be shown here.
+set time=(8 "Time spent in user mode   (CPU seconds) : %Us\
+Time spent in kernel mode (CPU seconds) : %Ss\
+Total time                              : %Es\
+CPU utilisation (percentage)            : %P")
+
+# Setting the 'echo_style' parameter to 'both'.
+# Other values are bsd, sysv, etc.
+# This way, both 'set -n' and 'set \003' styles will work.
+set echo_style=both
+
+##########################################################
+###     Environment Variables
+##########################################################
+
+# Set a reasonable route through the file system, paths etc. 
+set path=(/usr/local/{bin,sbin} /usr/{bin,sbin} /{bin,sbin} /junkyard/android-sdk-linux_x86/{tools,platform-tools})
+
+# Path for X
+if ( -x /usr/X11R6/bin ) then
+	set path=($path /usr/X11R6/bin)
+else if ( -x /usr/X11/bin ) then
+	set path=($path /usr/X11/bin)
+endif	
+
+# Other possibilities to put in the path
+if( -x ~/bin ) then
+	set path=($path ~/bin)
+endif
+if( -x /usr/share/bin ) then
+	set path=($path /usr/share/bin)
+endif
+if( -x /usr/contrib/bin ) then
+	set path=($path /usr/contrib/bin)
+endif
+if( -x /usr/local/scripts ) then
+	set path=($path /usr/local/scripts)
+endif
+if( -x /usr/games ) then
+	set path=($path /usr/games)
+endif
+if( -x ~/proggies ) then
+	set path=($path ~/proggies)
+endif
+
+# set LC_ALL variable
+setenv LC_ALL en_US.UTF-8
+
+setenv LS_COLORS 'no=00;01;37:fi=00;01;37:di=00;01;34:ln=00;01;36:pi=00;01;32:so=00;01;35:do=00;01;35:bd=00;01;33:cd=00;01;33:ex=00;01;31:mi=00;05;37:or=00;05;37:'
+# Set the manpath to display the manual pages
+setenv MANPATH /usr/man:/usr/local/man:/usr/X11R6/man:/usr/sbin/man:/usr/share/man:/usr/local/share/man
+
+# Dynamic Link/Load Libraries
+setenv LD_LIBRARY_PATH /usr/lib:/usr/X11R6/lib/:/lib:/usr/local/lib
+
+# Gnu Compiler
+setenv CC gcc
+
+# Set editor and pager variables
+setenv EDITOR vim
+setenv WINEDITOR gvim
+setenv PAGER most
+# Prevent wine from registering dll with system
+setenv WINEDLLOVERRIDES 'winemenubuilder.exe=d'
+
+#Enviromental variables to access Damien's CVS server. Some things go to .ssh/config file
+setenv CVSROOT :ext:jpoly@damien_cvs/cvsroot
+#This if for general purpose CVS
+#setenv CVSROOT :pserver:jpoly@10.70.1.147:/lotos2/cvs
+setenv CVS_RSH /usr/bin/ssh
+setenv CVSEDITOR vim
+
+# openoffice.org 3 Gnome integration
+setenv OOO_FORCE_DESKTOP gnome
+# Default printer
+#setenv LPDEST prtb220_a
+#setenv PRINTER ${LPDEST}
+
+# Color settings for the GNU ls command
+# Compressed Archive files are red (01;31)
+# Image Format files are yellow (01;33)
+# Audio/Video files are purple (01;35)
+#------------------------------------------
+# Black       00;30     Dark Gray     01;30
+# Blue        00;34     Light Blue    01;34
+# Green       00;32     Light Green   01;32
+# Cyan        00;36     Light Cyan    01;36
+# Red         00;31     Light Red     01;31
+# Purple      00;35     Light Purple  01;35
+# Brown       00;33     Yellow        01;33
+# Light Gray  00;37     White         01;37
+#------------------------------------------
+
+# Aliases for listing directories 'ls'
+#-------------------------------------
+alias ls    'ls --color -h --time-style="+%d-%m-%Y %H:%M" --group-directories-first'   # list all files
+alias la    'ls -aF'          # list all and file types
+alias dir   'ls -la'         # list <dir> style
+#alias ld    'ls -ld'          # list directories
+alias ll    'ls -lA'         # list <dir> style
+alias l     'ls -l'         #
+alias lx    'ls -lXB'         # sort by extension
+alias lk    'ls -lSr'         # sort by size
+alias lc    'ls -lcr'         # sort by change time
+alias lu    'ls -lur'         # sort by access time
+alias lr    'ls -lR'          # recursive ls
+alias lt    'ls -ltr'         # sort by date
+alias lm    'ls -al | more'   # pipe through 'more'
+alias .     'pwd'             # shows current directory
+alias ..    'cd ..'           # goes back one directory
+alias ../   'cd ../'          # goes back one directory
+alias ...   'cd ../..'        # goes back two directories
+alias .../  'cd ../../'       # goes back two directories
+alias -     'cd -'            # goes to previous directory
+alias /     'cd /'            # goes to the root directory
+
+# Misc general aliases for usefullness
+#-------------------------------------
+alias c			'clear'
+alias cdc		'cd;c'
+alias del       '\rm -rf'
+alias h         'history'
+alias ff        'find . -name "\!*" -print'
+alias ffi        'find . -iname "\!*" -print'
+alias rfind     'find . -type f -exec grep \!* {} \;'
+alias rgrep	    'find . -type f -print | xargs grep -i \!* '
+alias extract   'gunzip < \!* | tar -xvf -'
+alias bextract  'bunzip2 < \!* | tar -xvf -'
+alias compress  'tar -cvf - \!* | gzip -9cv > \!*.tar.gz'
+alias rminode   'find . -inum \!* -exec rm -i {} \;'
+alias mplayer   'mplayer -ao alsa -zoom -stop-xscreensaver'
+alias dvd       'mplayer dvd://1 -ao alsa -framedrop -nobps -forceidx -ni -vf pp=lb -alang en -slang hu -stop-xscreensaver -dvd-device /dev/hdd'
+
+alias vi		'rxvt -geometry 212x90+0+0 -e vim \!* &'
+alias cat 		'spc'
+#alias irssi		'rxvt -e irssi &'
+alias recent	'find -maxdepth 1 -type f -mtime -1 -printf "%T@-%Tk:%TM - %f\n" | sort -rn | cut -d- -f2-'
+alias diff		'colordiff'
+alias define	'curl -s -A "Mozilla/4.0"  "http://www.google.com/search?q=define%3A+"\!*  | html2text -ascii -nobs -style compact -width `tput cols` | grep "*"'
+alias 16to10 	'echo "ibase=16;obase=A;\!*" | bc'
+alias 10to16 	'echo "ibase=10;obase=16;\!*" | bc'
+alias 16to2 	'echo "ibase=16;obase=2;\!*" | bc'
+alias 10to2 	'echo "ibase=10;obase=2;\!*" | bc'
+alias 2to10 	'echo "ibase=2;obase=10;\!*" | bc'
+alias 2to16 	'echo "ibase=2;obase=16;\!*" | bc'
+alias file 		'file -rk \!*'
+alias 'ls-' 	'ls -\!*'
+
+#alias mkdircd   'mkdir -p \!* && eval cd "\"\$$#\""' 
+# Spelling typos - highly personnalized :-)
+#------------------------------------------
+alias xs        'cd'
+alias vf        'cd'
+alias moer      'more'
+alias moew      'more'
+alias maek      'make'
+alias alais     'alias'
+alias sl        'ls'
+alias grpe      'grep'
+alias man 		'/home/jpoly/proggies/vimman.sh'
+
+# Skip remaining setup if not an interactive shell
+if ($?USER == 0 || $?prompt == 0) exit
+
+# Settings for interactive shell
+#-------------------------------
+set ignoreeof
+set notify
+# noclobber prevents redirtecting STDOUT to existing regural files to prevent accidental destruction
+#set noclobber
+
+# For privacy you can stop the histfile with unset histfile
+#----------------------------------------------------------
+set history = 2000
+set histfile = "$HOME/.history"
+set savehist = ( 2000 merge )
+set histdup = 'erase'
+
+# Set up the 3 levels (types) of tcsh command prompts and title
+# of the console window. Lots of options. Do a man tcsh for more.
+#----------------------------------------------------------------
+# Prompt used for default: [user@host directory]>
+##############################
+# ##### PROMPT SECTION ##### #
+##############################
+set promptchars = '%#'
+# set color_name = '%{^[[ color_code m%}'
+#cat /home/jpoly/Desktop/metal.txt
+
+set rgb_restore   = '%{^[[00m%}'
+set rgb_black     = '%{^[[00;30m%}'
+set rgb_firebrick = '%{^[[00;31m%}'
+set rgb_red       = '%{^[[01;31m%}'
+set rgb_forest    = '%{^[[00;32m%}'
+set rgb_green     = '%{^[[01;32m%}'
+set rgb_brown     = '%{^[[00;33m%}'
+set rgb_yellow    = '%{^[[01;33m%}'
+set rgb_navy      = '%{^[[00;34m%}'
+set rgb_blue      = '%{^[[01;34m%}'
+set rgb_purple    = '%{^[[00;35m%}'
+set rgb_magenta   = '%{^[[01;35m%}'
+set rgb_cadet     = '%{^[[00;36m%}'
+set rgb_cyan      = '%{^[[01;36m%}'
+set rgb_gray      = '%{^[[00;37m%}'
+set rgb_white     = '%{^[[01;37m%}'
+
+set rgb_std       = "${rgb_white}"
+
+if ( ${?root} ) then
+    set rgb_usr = "${rgb_red}"
+else
+	set rgb_usr = "${rgb_green}"
+endif
+
+set prompt="${rgb_usr}[%n@${rgb_std}%m ${rgb_cadet}%c1${rgb_usr}]%#${rgb_restore} "
+unset rgb_usr
+# Prompt used when waiting for stufffor 'for' or 'while'...
+set prompt2="%R? "
+
+# Prompt used for correcting. <SPACE>: yes <ENTER>: no <e>: edit
+set prompt3="Did you mean %R ? (y|n|e) "
+
+# This changes the title bar/icon description of the console window.
+# used to be (set prompt="%{\e]2\;%m:%/^g\e]1\;%m^g\r%}[%n@%M %c1]> ")
+# It will look like ex:  /your/working/directory (ttyp #)
+setenv SHORT_HOST `echo $HOST | cut -f 1 -d. | tr 'a-z' 'A-Z'`
+setenv TTY " -ttyp`tty | cut -d/ -f4`"
+#switch ( $TERM )
+#      case "dtterm*":         # dtterm
+#      case "xterm*":          # xterm
+#              alias seticon 'echo -n "\033]1;\!*\007"'
+#              alias sethead 'echo -n "\033]2;\!*\007"'
+#              alias cwdcmd  'sethead "${PWD}"  "${TTY}"'
+#              breaksw;
+#      case "sun*":            # SunView cmdtool/shelltool
+#              alias seticon 'echo -n "\033]L\!*\033\\"'
+#              alias sethead 'echo -n "\033]l\!*\033\\"'
+#              alias cwdcmd  'sethead "${PWD}"  "${TTY}"'
+#              breaksw;
+#      case "vt[24]20*":       # TNVT and SecureCRT (Windows clients)
+#              alias seticon 'echo -n ""'
+#              alias sethead 'echo -n "\033]0;\!*\007\033\\"'
+#              alias cwdcmd  'sethead "${PWD}"  "${TTY}"'
+#              breaksw;
+#      default:
+#              alias seticon echo -n ""
+#              alias sethead echo -n ""
+#              unalias cwdcmd
+#endsw
+#sethead ${PWD} ${TTY}
+#seticon ${SHORT_HOST}
+
+# Easy edit of path, type <Ctrl-X> and then <p>
+bindkey -s '^Xp'        '. `echo $path`^X*)^A^Dset path = ( '
+
+# These are some Key bindings for different OS types that will make 
+# life easier. Example: F3 is used to move the cursor to or from 
+# beginning and end of line, and the Delete key will actully work.
+# Now you can eventually use those F*** keys.
+switch ($OSTYPE)
+    case "linux*":         # Linux
+#bindkey "\e[5~" history-search-backward
+		bindkey -k up history-search-backward
+#bindkey "\e[6~" history-search-forward
+		bindkey -k down history-search-forward
+        bindkey ^[[2~ overwrite-mode                # INSERT
+        bindkey ^[[3~ delete-char                   # DELETE
+        bindkey ^[[[A run-help                      # F1
+        bindkey OP  run-help                 
+        bindkey ^[[[B set-mark-command              # F2
+        bindkey OQ  set-mark-command          
+        bindkey ^[[[C exchange-point-and-mark       # F3
+        bindkey OR  exchange-point-and-mark   
+        bindkey ^[[[D undefined-key                 # F4
+        bindkey OS  undefined-key
+        bindkey ^[[[E spell-line                    # F5
+        bindkey [15~ spell-line
+        bindkey ^[[17~ spell-word                   # F6
+        bindkey ^[[18~ insert-last-word             # F7
+        bindkey -s ^[[19~ "\16source ~/.tcshrc\n"      # F8
+        bindkey ^[[20~ clear-screen                 # F9
+        bindkey -s ^[[21~ "\16ls -lA\n"              # F10
+    breaksw;
+    case "freebsd*":       # FreeBSD
+    case "FreeBSD*":       # FreeBSD
+    case "darwin*":        # Apple OS X
+        bindkey ^[[L overwrite-mode                 # INSERT
+        bindkey ^[[2~ overwrite-mode	        
+        bindkey ^? delete-char                      # DELETE
+        bindkey ^[[3~ delete-char		        
+        bindkey ^[[M run-help                       # F1
+        bindkey OP run-help                 
+        bindkey ^[[N set-mark-command               # F2
+        bindkey OQ set-mark-command          
+        bindkey ^[[O exchange-point-and-mark        # F3
+        bindkey OR exchange-point-and-mark   
+        bindkey ^[[P undefined-key                  # F4
+        bindkey OS undefined-key
+        bindkey ^[[Q spell-line                     # F5
+        bindkey [15~ spell-line
+        bindkey ^[[R spell-word                     # F6
+        bindkey ^[[17~ spell-word
+        bindkey ^[[S insert-last-word               # F7
+        bindkey ^[[18~ insert-last-word
+        bindkey ^[[T history-search-backward        # F8
+        bindkey ^[[19~ history-search-backward
+        bindkey ^[[U clear-screen                   # F9
+        bindkey ^[[20~ clear-screen                 
+        bindkey -s ^[[V "^Uls -l\n"                 # F10
+        bindkey -s ^[[21~ "^Uls -l\n"              
+    breaksw;
+    case "solaris*":       # Sun Solaris
+        bindkey ^[[L overwrite-mode                 # INSERT
+        bindkey ^[[2~ overwrite-mode
+        # BackSpace hell, brought to you by Sun Microsystems
+        if ($TERM == dtterm) then
+        bindkey ^H backward-delete-char             # BACKSPACE
+        bindkey ^? delete-char                      # DELETE
+        endif
+        if ($TERM != dtterm) then
+        bindkey ^? backward-delete-char             # BACKSPACE
+        bindkey ^[[3~ delete-char                   # DELETE
+        endif
+        bindkey ^[[M run-help                       # F1
+        bindkey ^[[11~ run-help                 
+        bindkey ^[[N set-mark-command               # F2
+        bindkey ^[[12~ set-mark-command          
+        bindkey ^[[O exchange-point-and-mark        # F3
+        bindkey ^[[13~ exchange-point-and-mark   
+        bindkey ^[[P undefined-key                  # F4
+        bindkey ^[[14~ undefined-key
+        bindkey ^[[Q spell-line                     # F5
+        bindkey ^[[15~ spell-line
+        bindkey ^[[R spell-word                     # F6
+        bindkey ^[[17~ spell-word
+        bindkey ^[[S insert-last-word               # F7
+        bindkey ^[[18~ insert-last-word
+        bindkey ^[[T history-search-backward        # F8
+        bindkey ^[[19~ history-search-backward
+        bindkey ^[[U clear-screen                   # F9
+        bindkey ^[[20~ clear-screen
+        bindkey -s ^[[V "^Uls -l\n"                 # F10
+        bindkey -s ^[[21~ "^Uls -l\n"
+    breaksw;
+    default:               # Unknown OS Type
+        bindkey ^[[L overwrite-mode                 # INSERT
+        bindkey ^[[2~ overwrite-mode	        
+        bindkey ^? delete-char                      # DELETE
+        bindkey ^[[3~ delete-char
+        bindkey ^[[M run-help                       # F1
+        bindkey OP run-help                 
+        bindkey ^[[N set-mark-command               # F2
+        bindkey OQ set-mark-command          
+        bindkey ^[[O exchange-point-and-mark        # F3
+        bindkey OR exchange-point-and-mark   
+        bindkey ^[[P undefined-key                  # F4
+        bindkey OS undefined-key
+        bindkey ^[[Q spell-line                     # F5
+        bindkey [15~ spell-line
+        bindkey ^[[R spell-word                     # F6
+        bindkey ^[[17~ spell-word
+        bindkey ^[[S insert-last-word               # F7
+        bindkey ^[[18~ insert-last-word
+        bindkey ^[[T history-search-backward        # F8
+        bindkey ^[[19~ history-search-backward
+        bindkey ^[[U clear-screen                   # F9
+        bindkey ^[[20~ clear-screen
+        bindkey -s ^[[V "^Uls -l\n"                 # F10
+        bindkey -s ^[[21~ "^Uls -l\n"
+    breaksw;
+endsw
+
