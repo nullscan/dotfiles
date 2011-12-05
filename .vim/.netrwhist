@@ -1,5 +1,5 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =7
+let g:netrw_dirhist_cnt =8
 let g:netrw_dirhist_1='/usr/share/irssi/help'
 let g:netrw_dirhist_2='/usr/share/themes'
 let g:netrw_dirhist_3='/usr/share/themes/Mire_v2_blue'
@@ -7,3 +7,4 @@ let g:netrw_dirhist_4='/usr/share/themes/Mire_v2_blue/openbox-3'
 let g:netrw_dirhist_5='/home/jpoly/.vim/c-support/templates'
 let g:netrw_dirhist_6='/home/jpoly/.canto'
 let g:netrw_dirhist_7='/home/jpoly/.songbird2/hbm26ttx.default/extensions/{248e3e8b-5a5c-4e7e-9bef-6720255e36e0}/chrome/content/style'
+let g:netrw_dirhist_8='/var/lib/bitlbee'

@@ -1,1 +1,2 @@
 LargeFile.vba: call delete('/home/jpoly/.vim/plugin/LargeFile.vim')|call delete('/home/jpoly/.vim/doc/LargeFile.txt')
+tagbar.vba: call delete('/home/jpoly/.vim/plugin/tagbar.vim')|call delete('/home/jpoly/.vim/syntax/tagbar.vim')|call delete('/home/jpoly/.vim/doc/tagbar.txt')

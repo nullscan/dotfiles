@@ -8,15 +8,19 @@ set smartindent					" smart indent
 set autoindent					" always set autoindenting on
 set showcmd						" display incomplete commands
 set hlsearch					" highlight searches
+"set highlight=8r,db,es,hs,mb,Mr,nu,rs,sr,tb,vr,ws  " dont know what this does really, just use it
 set incsearch					" do incremental searching
 set visualbell t_vb=			" turn off error beep/flash
 set novisualbell				" turn off visual bell
 set nobackup					" real men NEVER use backups
 set number						" show line numbers
-set noignorecase				" don't ignore case
+set ignorecase 					" ignore case if all is lower case. Use \C to get case sensitivity
+set smartcase
+set title
+set nofsync 					" improves performance
 set ttyfast						" smoother changes
 set modeline					" last lines in document sets vim mode
-"set modelines=3					" number lines checked for modelines
+set modelines=3					" number lines checked for modelines
 set shortmess=atI				" Abbreviate messages
 set nostartofline				" don't jump to first character when paging
 set whichwrap=b,s,h,l,<,>,[,]	" move freely between files
@@ -37,25 +41,30 @@ set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " a ruler on steroids
 set showcmd						" show partial commands in status line and
 								" selected characters/lines in visual mode
 set matchpairs+=<:>				" which patterns can be matched with %
-set mouse=a						" enable mouse ussage in console vim
-
+" set mouse=a						" enable mouse ussage in console vim
+set viewoptions=folds,options,cursor,unix,slash
+set report=0 					" always report how many lines are changed
+set autochdir 					" automaticaly chdir of vim path to the file open in buffer
 
 " Enable built in useful options
 syntax on	" syntax highlighing
-filetype on	" enable filetype detection
+filetype plugin indent on	" enable filetype detection
 
-let Tlist_Exit_OnlyWindow = 1
+" let Tlist_Exit_OnlyWindow = 1
+let g:tagbar_left = 1
+let g:tagbar_usearrows = 1
 " custom status line for C, C++ and header files
-au BufRead *.cpp,*.c,*.h set statusline=\File:\ %F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L\ \ %=\ %r%{ShowFuncName()}%h
+" au BufRead *.cpp,*.c,*.h set statusline=\File:\ %F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L\ \ %=\ %r%{ShowFuncName()}%h
+au BufRead *.cpp,*.c,*.h set statusline=\ %f%m%r%h%w\ \in\ \%{CurDir()}\ %{ShowFuncName()}\%=%([%{&ff}\|%{(&fenc==\"\"?&enc:&fenc).((exists(\"+bomb\")\ &&\ &bomb)?\",B\":\"\")}%k\|%Y]%)\ %([%04.4l\ \(of\ \%04.4L),%-03.3v][%p%%]\ \ASCII=%-04.4b\ HEX=0x%-04.4B\%)
 " Open new buffer in new tab
 "au BufAdd,BufNewFile * nested tab sball
-autocmd FileType cpp,c,h TlistToggle
-set statusline=\File:\ %F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L
+autocmd FileType cpp,c,h TagbarOpen
+set statusline=\ %f%m%r%h%w\ \in\ \%{CurDir()}\ %=%([%{&ff}\|%{(&fenc==\"\"?&enc:&fenc).((exists(\"+bomb\")\ &&\ &bomb)?\",B\":\"\")}%k\|%Y]%)\ %([%04.4l\ \(of\ \%04.4L),%-03.3v][%p%%]\ \ASCII=%-04.4b\ HEX=0x%-04.4B\%)
 
 function! ShowFuncName()
 	let lnum = line(".")
 	let col = col(".")
-	let f_ = getline(search("^[^ \t#/]\\{2}.*[^:]\s*$", 'bW'))
+	let f_ = substitute(getline(search("^[^ \t#/]\\{2}.*[^:]\s*$", 'bW')), ",\\=[^,]{", "", "")
 	let f = search("\\%" . lnum . "l" . "\\%" . col . "c")
 	return f_
 endfunction
@@ -165,14 +174,16 @@ map <F2> :next<CR>
 " map F3 to make command
 map <silent> <F3> :exec ":!make"<CR>
 map <silent> <S-F3> :exec ":!make clean"<CR>
-" map F7 to open the corresponding .h or .cpp file to the one curently displayed in a new tab
-map <silent> <F7> :exec ":tabnew ".(expand("%") =~ ".h$"
-	\ ? glob(substitute(expand("%"), ".h$", ".c", ""))
-	\ : substitute(expand("%"), "\\.c$", ".h", ""))<CR>
+" map F7 to open the corresponding .h or .c(pp) file to the one curently displayed in a new tab. a.vim plugin
+map <F7> :AT<CR>
 " map F4 to open previous tab
-map <silent> <F4> :exec ":tabprevious"<CR>
+nmap <silent> <F4> :tabprevious<CR>
 " map F5 to open next tab
-map <silent> <F5> :exec ":tabnext"<CR>
+nmap <silent> <F5> :tabnext<CR>
+" F4 in insert mode: exit insert, switch tab, enter insert again
+imap <silent> <F4> <ESC>:tabprevious<CR>i
+" map F5 to open next tab
+imap <silent> <F5> <ESC>:tabnext<CR>i
 " map F6 to cycle through window splits
 map <silent> <F6> :exec ":!aspell -c %"<CR>
 " turn off highlighted search
@@ -203,7 +214,7 @@ map <backspace> <c-b>
 nnoremap <C-H> :Hexmode<CR>
 inoremap <C-H> <ESC>:Hexmode<CR>
 vnoremap <C-H> :<C-U>Hexmode<CR>
-nnoremap <silent> <F8> :TlistToggle<CR>
+nnoremap <silent> <F8> :TagbarToggle<CR>
 nmap <silent> <C-A-c> :!make clean<CR>
 map <silent> <C-A-c> :!make clean<CR>
 nmap <silent> <C-A-m> :!make install<CR>

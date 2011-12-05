@@ -224,7 +224,7 @@ set echo_style=both
 ##########################################################
 
 # Set a reasonable route through the file system, paths etc. 
-set path=(/usr/local/{bin,sbin} /usr/{bin,sbin} /{bin,sbin} /junkyard/android-sdk-linux_x86/{tools,platform-tools})
+set path=(/usr/local/{bin,sbin} /usr/{bin,sbin} /{bin,sbin} /junkyard/android-sdk/{tools,platform-tools})
 
 # Path for X
 if ( -x /usr/X11R6/bin ) then
@@ -340,6 +340,8 @@ alias compress  'tar -cvf - \!* | gzip -9cv > \!*.tar.gz'
 alias rminode   'find . -inum \!* -exec rm -i {} \;'
 alias mplayer   'mplayer -ao alsa -zoom -stop-xscreensaver'
 alias dvd       'mplayer dvd://1 -ao alsa -framedrop -nobps -forceidx -ni -vf pp=lb -alang en -slang hu -stop-xscreensaver -dvd-device /dev/hdd'
+alias damien	'sftp -oIdentityFile=~/.ssh/id_rsa.damien jpoly@10.70.130.112'
+alias versions  'sudo mount -t cifs //pfsfs.intralot.com/public /mnt/versions/ -o user="technical\polyzois"'
 
 alias vi		'rxvt -geometry 212x90+0+0 -e vim \!* &'
 alias cat 		'spc'
@@ -368,6 +370,7 @@ alias alais     'alias'
 alias sl        'ls'
 alias grpe      'grep'
 alias man 		'/home/jpoly/proggies/vimman.sh'
+alias precmd 	'printf \\033]0\;\%s\\007 "What is thy bidding, my Master"'
 
 # Skip remaining setup if not an interactive shell
 if ($?USER == 0 || $?prompt == 0) exit
