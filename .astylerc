@@ -1,6 +1,6 @@
 #indent-tab=4
 brackets=attach
-break-closing-brackets
+#break-closing-brackets
 indent-classes
 indent-switches
 pad-paren-out
