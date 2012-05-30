@@ -1,119 +1,107 @@
---
--- xmonad.hs by P0ly
--- Last edit: 02/02/2010
---
-import XMonad
+import XMonad hiding ( (|||) )
+import XMonad.Layout.LayoutCombinators
 import System.Exit
+import XMonad.Hooks.SetWMName
+
+--dzen nessesesity's
+import XMonad.Hooks.DynamicLog
+import XMonad.Util.Run
+import XMonad.Util.Dzen
+import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.UrgencyHook
 import System.IO
-import Graphics.X11.Xlib
+
+--For the Keybindings
+import XMonad.Actions.CycleWS
+import XMonad.Util.EZConfig
+import XMonad.Actions.SinkAll
+
+--Layouts
+--import XMonad.Layout.Grid
+
+--Java issues
+import XMonad.Hooks.SetWMName
+
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
-import qualified XMonad.Actions.Submap as SM
-import qualified XMonad.Actions.Search as S
--- Hooks
-import XMonad.Hooks.EwmhDesktops
-import XMonad.Hooks.ManageDocks
-import XMonad.Hooks.ManageHelpers
-import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.SetWMName
-import XMonad.Hooks.UrgencyHook
-import XMonad.Hooks.FadeInactive
---import XMonad.Hooks.InsertPosition
---import XMonad.Hooks.Place
---import XMonad.Hooks.PositionStoreHooks
-import XMonad.Layout.Magnifier
-import XMonad.Prompt
-import XMonad.Prompt.Shell
-import XMonad.Prompt.Ssh
-import XMonad.Util.EZConfig 
-import XMonad.Util.Run(spawnPipe)
-import XMonad.Layout.Tabbed
-import XMonad.Layout.PerWorkspace (onWorkspace)
-import XMonad.Layout.LayoutScreens
-import XMonad.Layout.TwoPane
 
-main = do
-	xmproc <- spawnPipe "xmobar"  -- start xmobar
-	xmonad $ withUrgencyHook NoUrgencyHook $ defaultConfig {
-	terminal   = "rxvt -e screen"
-	, modMask  = mod4Mask
-	, workspaces = myWorkspaces
-	, keys       = myKeys
-	, logHook = myLogHook xmproc
-	, manageHook = composeAll [ className =? "Iceweasel" --> doShift "2:net" -- Move things to correct workspace
-							  , className =? "Icedove" --> doShift "3:mail"
-							  , className =? "OpenOffice.org 3.1" --> doShift "4:docs"
-							  , className =? "Acroread-en" --> doShift "4:docs"
-							  , className =? "Songbird" --> doShift "5:multimedia"
-							  , className =? "Eclipse" --> doShift "6:code"
-							  , className =? "VirtualBox" --> doShift "7:VM"
-							  , title =? "vim" --> doShift "8"
-							  ] <+> manageDocks
-	, layoutHook = avoidStruts $ Mirror tiled ||| magnifiercz 1.1 (Mirror tiled) ||| Full }
+modm = mod4Mask
+--myStatusBar = "~/.xmonad/dzen.sh | dzen2 -w 1024 -h 14 -fg '#DDEEDD' -fn '-*-terminus-medium-*-*-*-12-*-*-*-*-*-*-*' -bg '#000000'"
+myStatusBar = "dzen2 -ta l -w 512 -h 14 -fg '#DDEEDD' -fn '-*-terminus-medium-*-*-*-12-*-*-*-*-*-*-*' -bg '#000000'"
 
-tiled :: Tall a
-tiled = Tall 1 (3/100) (1/2)
+--Urgency hint options:
+myUrgencyHook = withUrgencyHook dzenUrgencyHook { args = ["-y 1000"] }
 
-myWorkspaces :: [WorkspaceId]
-myWorkspaces = ["1:main","2:net","3:mail","4:docs","5:multimedia","6:code","7:VM","8","9"]
+myLayout = tall ||| Full ||| Mirror tall
+	where
+		tall = Tall 1 (3/100) (1/2)
 
-myLogHook :: Handle -> X ()
-myLogHook h = dynamicLogWithPP $ customPP { ppOutput = hPutStrLn h }
-
--- bar
-customPP :: PP
-customPP = defaultPP { ppHidden = xmobarColor "#00FF00" ""
-					 , ppCurrent = xmobarColor "#FF0000" "" . wrap "[" "]"
-					 , ppUrgent = xmobarColor "#FF0000" "" . wrap "*" "*"
-                     , ppLayout = xmobarColor "#FF0000" ""
-                     , ppTitle = xmobarColor "#00FF00" "" . shorten 80
-                     , ppSep = "<fc=#0033FF> | </fc>"
-		 }
-
-xpc :: XPConfig
-xpc = defaultXPConfig { bgColor  = "black"
-                      , fgColor  = "grey"
-                      , promptBorderWidth = 0
-                      , position = Bottom
-                      , height   = 15
-                      , historySize = 256 }
-
-myKeys c = mkKeymap c $                                 -- keys; uses EZConfig
-    [ ("M-S-<Return>",  spawn $ XMonad.terminal c)       -- spawn terminal
-    , ("M-r"         ,  shellPrompt xpc)                 -- spawn menu program, uses Shell
-    , ("M-s"         ,  search)                          -- search websites, uses Search & Submap
-    , ("M-S-s"       ,  sshPrompt xpc)                   -- spawn ssh, uses Ssh
-    , ("M-S-c"       ,  kill)                            -- kill window
-    , ("M-<Space>"   ,  sendMessage NextLayout)          -- next layout
-    , ("M-S-<Space>" ,  setLayout $ XMonad.layoutHook c) -- default layout
-    , ("M-n"         ,  refresh)                         -- resize to correct size
-    , ("M-j"         ,  windows W.focusDown)             -- move focus; next window
-    , ("M-k"         ,  windows W.focusUp)               -- move focus; prev. window
-    , ("M-m"         ,  windows W.focusMaster)           -- focus on master
-    , ("M-<Return>"  ,  windows W.swapMaster)            -- swap current with master
-    , ("M-S-j"       ,  windows W.swapDown)              -- swap focused with next window
-    , ("M-S-k"       ,  windows W.swapUp)                -- swap focused with prev. window
-    , ("M-h"         ,  sendMessage Shrink)              -- shrink master area
-    , ("M-e"         ,  sendMessage Expand)              -- expand master area
-    , ("M-l"         ,  spawn "gnome-screensaver-command -l")              -- expand master area
-    , ("M-t"         ,  withFocused $ windows . W.sink)  -- put window back on tiling layer
-    , ("M-,"         ,  sendMessage (IncMasterN 1))      -- increase number of windows in master pane
-    , ("M-."         ,  sendMessage (IncMasterN (-1)))   -- decrease number of windows in master pane
-    , ("M-b"         ,  sendMessage ToggleStruts)        -- toggle status bar gap, uses ManageDocks
-    , ("M-S-q"       ,  broadcastMessage ReleaseResources
-                        >> restart "xmonad" True)        -- restart xmonad
-    , ("C-S-q"       ,  io (exitWith ExitSuccess))       -- exit xmonad
-    ] ++
-    -- mod-[1..9], Switch to workspace N
-    -- mod-shift-[1..9], Move client to workspace N
-    [(m ++ k, windows $ f w)
-        | (w, k) <- zip (XMonad.workspaces c) (map show [1..9])
-        , (m, f) <- [("M-",W.greedyView), ("M-S-",W.shift)]]
-
- where searchSite = S.promptSearchBrowser xpc "firefox"
-       search     = SM.submap . mkKeymap c $
-                     [("g", searchSite S.google)
-                     ,("h", searchSite S.hoogle)
-                     ,("a", searchSite S.amazon)
-                     ,("i", searchSite S.imdb)
-                     ,("y", searchSite S.youtube)]
+--dynamicLog pretty printer for dzen:
+myDzenPP h = defaultPP
+	{
+	ppCurrent = wrap "^fg(#00aaff)^bg(#333333)^fg(white)" "^bg()^fg()"
+	, ppVisible = wrap "^fg(#00aa00)^fg(white)" "^fg()"
+	, ppHidden = wrap "^fg(white)" "^fg()"
+	, ppHiddenNoWindows = wrap "^fg(#444444)" "^fg()"
+	, ppUrgent = wrap "^fg(#ff0000)" "^fg()"
+	, ppSep = " "
+	, ppWsSep = " "
+	, ppTitle = dzenColor ("white") "" . wrap "-[ " " ]-"
+	, ppLayout = dzenColor ("#a0a0a0") ""
+	, ppOutput = hPutStrLn h
+	}
+    
+staticWs = ["main","www","three","four","five","six"]
+main :: IO ()
+main = do 
+    dzen <- spawnPipe myStatusBar
+    xmproc <- spawnPipe "xbindkeys"
+    xmonad $ myUrgencyHook $ defaultConfig
+     {
+         -- simple stuff
+        terminal           = "urxvt"
+        ,focusFollowsMouse  = True
+        ,borderWidth        = 1
+        ,modMask            = mod1Mask
+        ,workspaces         = ["main","www","three","four","five","six"]
+        ,normalBorderColor  = "#555b2f"
+        ,focusedBorderColor = "#333333"
+        -- hooks, layouts
+        ,layoutHook         = avoidStruts $ myLayout
+        ,manageHook            = composeAll     [ className =? "Chrome" --> doF(W.shift "www"), className =? "TeamViewer.exe" --> doF(W.shift "six") ]
+                              <+> manageDocks
+        ,logHook             = dynamicLogWithPP $ myDzenPP dzen
+        ,startupHook        = setWMName "LG3D"
+        }
+        `additionalKeys`
+        [
+        -- Move focus in workspace
+          ((modm, xK_Right ), windows W.focusDown)                 
+         ,((modm, xK_Left ), windows W.focusUp)
+        -- Moce windows in workspace
+        ,((modm .|. shiftMask, xK_Right), windows W.swapDown)
+        ,((modm .|. shiftMask, xK_Left ), windows W.swapUp)
+        -- Move screenfocus    
+          ,((controlMask, xK_Right), nextScreen)    
+        ,((controlMask, xK_Left ), prevScreen)
+          -- Move windows across screens    
+        ,((controlMask .|. shiftMask, xK_Right), shiftNextScreen)
+        ,((controlMask .|. shiftMask, xK_Left), shiftPrevScreen)
+        -- Switch workspace
+        ,((controlMask .|. modm, xK_Right), nextWS)
+        ,((controlMask .|. modm, xK_Left), prevWS)
+        -- Move windows across workspaces
+        ,((controlMask .|. modm .|. shiftMask, xK_Right), shiftToNext)
+        ,((controlMask .|. modm .|. shiftMask, xK_Left), shiftToPrev)
+        -- Sink all windows into tiling
+        ,((modm, xK_t), sinkAll)
+        -- Java hack
+        ,((modm, xK_F12), setWMName "LG3D")
+        --Commands
+        ,((modm, xK_Return), spawn "urxvt -e screen")
+        ,((modm, xK_b), spawn "/opt/google/chrome/chrome")
+        ,((modm, xK_r), spawn "dmenu_run -fn '-*-montecarlo-medium-*-*-*-11-110-*-*-*-*-*-*' -b -p 'Run: ' -nb black -nf grey -sb darkblue -sf darkgrey")
+        ,((modm, xK_c), kill)
+		,((modm .|. shiftMask, xK_q), io (exitWith ExitSuccess))
+        ]
