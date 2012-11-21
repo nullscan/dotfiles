@@ -22,8 +22,15 @@ set copy=yes
 set sidebar_visible=yes
 set sidebar_width=30
 
+# mail address alias
+set alias_file=~/.mutt/aliases
+source ~/.mutt/aliases
+
 # beep on new mail
 set beep_new
+
+# ask for cc recipients
+set askcc
 
 set implicit_autoview
 # we want to see some MIME types inline, see below this code listing for explanation
@@ -60,20 +67,25 @@ set edit_headers=yes      # See the headers when editing
 
 # mailbox configuraton
 set mbox_type   = Maildir
-set folder      = "~/.mail"
-set spoolfile   = "+INBOX"
-#set mbox        = "+sent"
-set postponed   = "+drafts"
-set record 		= "+sent"
+set folder      = "~/.maildir"
+set spoolfile   = "+inbox"
+#set postponed   = "+postponed"
+#set record 		= "+sent"
+set move 		= no
 #unset record                            # required to prevent duplicates in Sent
+mailboxes ! +bak.sent +bak.trash +bak.spam
 
 
 # mailboxes
-mailboxes +INBOX +sent +drafts
+#mailboxes ! +sent
+#mailboxes +INBOX +sent +drafts
 
+folder-hook . 'unset trash'
+folder-hook . 'set trash="+bak.trash"'
 # bindings
-macro index D "<save-message>+trash<enter>"   "move message to the trash"
-macro index S "<save-message>+spam<enter>"    "mark message as spam"
+macro index D "<save-message>+bak.trash<enter>"   "move message to the trash"
+macro index S "<save-message>+bak.spam<enter>"    "mark message as spam"
+macro index H "<save-message>+inbox<enter>"    "un-mark message as spam (move to inbox)"
 
 # composing mail
 # save attachments with the body
@@ -87,68 +99,137 @@ set mime_forward=yes
 set mime_forward_rest=yes
 
 # personality settings
-set realname = "yourname"
-set from = "yourmail"
+set realname = "Giannis Polyzois"
+set from = "ypolizois@travelplanet24.com"
 
 #stuff to compose multipart/mixed mail for the corporate sigmanute shitty thing
-set editor=email-editor
-macro compose B ":set editor=text2mime-markdown.pl<enter>E:set editor=email-editor<enter>a/tmp/html-markdown-alternative.html<enter>^Dua/home/jpoly/.signature/image001.jpg<enter>^D<Home>D"
-#send-hook . 'push B'
+set editor="vim -c 'set tw=70 et' '+/^$' " 
+set edit_headers=yes
 set sendmail="/usr/bin/msmtp"
 
 
 #---- Mutt Colors for Black Background -------
-color   hdrdefault   blue              black
-color   quoted       blue              black
-color   signature    blue              black
-color   attachment   red               black
-color   message      brightred         black
-color   error        brightred         black
-color   indicator    black             red
-color   status       brightgreen       blue
-color   tree         white             black
-color   normal       white             black
-color   markers      red               black
-color   search       white             black
-color   tilde        brightmagenta     black
-color   index        blue              black ~F
-color   index        red               black "~N|~O"
+# general-doesn't-fit stuff
+color normal     color188 color237
+color error      color115 color236
+color markers    color142 color238
+color tilde      color108 color237
+color status     color144 color234
+
+# index stuff
+color indicator  color108 color236
+color tree       color109 color237
+color index      color188 color237 ~A
+color index      color82 color237 ~N
+color index      color188 color237 ~O
+color index      color174 color237 ~F
+color index      color174 color237 ~D
+
+# header stuff
+color header		color96		color237	"^From"
+color header		color88		color237	"^Date"
+color header		color226 	color237	"^(Subject)"
+color header		color123	color237	"^(To|Reply-To):"
+color header		color83 	color237	"^(Cc|Bcc):"
+color header		color245	color237	"^(X-Original-To):"
+color header		color96		color237	"^(User-Agent|X-Editor|X-Mailer):"
+color header 		cyan		color237	"^Organization:"
+
+# gpg stuff
+color body       color188 color237 "^gpg: Good signature.*"
+color body       color115 color236 "^gpg: BAD signature.*"
+color body       color174 color237 "^gpg: Can't check signature.*"
+color body       color174 color237 "^-----BEGIN PGP SIGNED MESSAGE-----"
+color body       color174 color237 "^-----BEGIN PGP SIGNATURE-----"
+color body       color174 color237 "^-----END PGP SIGNED MESSAGE-----"
+color body       color174 color237 "^-----END PGP SIGNATURE-----"
+color body       color174 color237 "^Version: GnuPG.*"
+color body       color174 color237 "^Comment: .*"
+# emoticons
+color body          color245        color237        "[;:][-o][)/(|]"    # emoticons
+color body          color245        color237        "[;:][)(|]"         # emoticons
+color body          color245        color237        "[*]?((N)?ACK|CU|LOL|SCNR|BRB|BTW|CWYL|\
+                                                     |FWIW|vbg|GD&R|HTH|HTHBE|IMHO|IMNSHO|\
+                                                     |IRL|RTFM|ROTFL|ROFL|YMMV)[*]?"
+color body          color245        color237        "[ ][*][^*]*[*][ ]?" # more emoticon?
+color body          color245        color237        "[ ]?[*][^*]*[*][ ]" # more emoticon?
+#insane URL regex
+color body          color160        color237        "([a-z][a-z0-9+-]*://(((([a-z0-9_.!~*'();:&=+$,-]|%[0-9a-f][0-9a-f])*@)?((([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?|[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)(:[0-9]+)?)|([a-z0-9_.!~*'()$,;:@&=+-]|%[0-9a-f][0-9a-f])+)(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?(#([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?|(www|ftp)\\.(([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?(:[0-9]+)?(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?(#([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?)[^].,:;!)? \t\r\n<>\"]"
+
+# url, email and web stuff
+color body       color174 color237 "(finger|ftp|http|https|news|telnet)://[^ >]*"
+color body       color174 color237 "<URL:[^ ]*>"
+color body       color174 color237 "www\\.[-.a-z0-9]+\\.[a-z][a-z][a-z]?([-_./~a-z0-9]+)?"
+color body       color174 color237 "mailto: *[^ ]+\(\\i?subject=[^ ]+\)?"
+color body       color174 color237 "[-a-z_0-9.%$]+@[-a-z_0-9.]+\\.[-a-z][-a-z]+"
+
+# misc body stuff
+color attachment color174 color237 #Add-ons to the message
+color signature  color223 color237
+
+# quote levels
+color quoted     color108 color237
+color quoted1    color116 color237
+color quoted2    color247 color237
+color quoted3    color108 color237
+color quoted4    color116 color237
+color quoted5    color247 color237
+color quoted6    color108 color237
+color quoted7    color116 color237
+color quoted8    color247 color237
+color quoted9    color108 color237
+
+#color   hdrdefault   blue              black
+#color   quoted       blue              black
+#color   signature    blue              black
+#color   attachment   red               black
+#color   message      brightred         black
+#color   error        brightred         black
+#color   indicator    black             red
+#color   status       brightgreen       blue
+#color   tree         white             black
+#color   normal       white             black
+#color   markers      red               black
+#color   search       white             black
+#color   tilde        brightmagenta     black
+#color   index        blue              black ~F
+#color   index        red               black "~N|~O"
 # if you don't like the black progress bar at the bottom of the screen,
 # comment out the following line
-color progress    white          black
+#color progress    white          black
 
 # Section for PGP signing
-set crypt_autopgp=no # disabe PGP...
-set crypt_autosmime=yes # use SMIME instead
-set crypt_verify_sig=yes
-set smime_is_default=yes
-set crypt_autosign=yes
-set smime_keys="~/.smime/keys"
-set smime_certificates="~/.smime/certificates"
-set smime_ca_location="~/.smime/ca-bundle.crt"
-set smime_default_key="9b1df715.0"
-#set smime_sign_as="9b1df715.0"
-#set smime_sign_command="openssl smime -sign -signer %c -inkey %k -passin stdin -in %f -certfile %i -outform DER"
-set smime_sign_command="mutt-smime-sign.pl %f"
-# These are used to extract a certificate from a message.
-# First generate a PKCS#7 structure from the message.
-set smime_pk7out_command="openssl smime -verify -in %f -noverify -pk7out"
-
-# Extract the included certificate(s) from a PKCS#7 structure.
-set smime_get_cert_command="openssl pkcs7 -print_certs -in %f"
-
-# Extract the signer's certificate only from a S/MIME signature (sender verification)
-set smime_get_signer_cert_command="openssl smime -verify -in %f -noverify -signer %c -out /dev/null"
-# Extract the included certificate(s) from a PKCS#7 structure.
-set smime_get_cert_command="openssl pkcs7 -print_certs -in %f"
-# This is used to get the email address the certificate was issued to.
-set smime_get_cert_email_command="openssl x509 -in  %f -noout -email"
-# Add a certificate to the database using smime_keys.
-set smime_import_cert_command="smime_keys add_cert %f"
-# Verify a signature of type multipart/signed
-set smime_verify_command="openssl smime -verify -inform DER -in %s -CAfile /home/jpoly/.smime/IntralotOfficialCA.cer -content %f"
-# Verify a signature of type application/x-pkcs7-mime
-set smime_verify_opaque_command="openssl smime -verify -inform DER -in %s -CAfile /home/jpoly/.smime/IntralotOfficialCA.cer"
+#set crypt_autopgp=no # disabe PGP...
+#set crypt_autosmime=yes # use SMIME instead
+#set crypt_verify_sig=yes
+#set smime_is_default=yes
+#set crypt_autosign=yes
+#set smime_keys="~/.smime/keys"
+#set smime_certificates="~/.smime/certificates"
+#set smime_ca_location="~/.smime/ca-bundle.crt"
+#set smime_default_key="9b1df715.0"
+##set smime_sign_as="9b1df715.0"
+##set smime_sign_command="openssl smime -sign -signer %c -inkey %k -passin stdin -in %f -certfile %i -outform DER"
+#set smime_sign_command="mutt-smime-sign.pl %f"
+## These are used to extract a certificate from a message.
+## First generate a PKCS#7 structure from the message.
+#set smime_pk7out_command="openssl smime -verify -in %f -noverify -pk7out"
+#
+## Extract the included certificate(s) from a PKCS#7 structure.
+#set smime_get_cert_command="openssl pkcs7 -print_certs -in %f"
+#
+## Extract the signer's certificate only from a S/MIME signature (sender verification)
+#set smime_get_signer_cert_command="openssl smime -verify -in %f -noverify -signer %c -out /dev/null"
+## Extract the included certificate(s) from a PKCS#7 structure.
+#set smime_get_cert_command="openssl pkcs7 -print_certs -in %f"
+## This is used to get the email address the certificate was issued to.
+#set smime_get_cert_email_command="openssl x509 -in  %f -noout -email"
+## Add a certificate to the database using smime_keys.
+#set smime_import_cert_command="smime_keys add_cert %f"
+## Verify a signature of type multipart/signed
+#set smime_verify_command="openssl smime -verify -inform DER -in %s -CAfile /home/jpoly/.smime/IntralotOfficialCA.cer -content %f"
+## Verify a signature of type application/x-pkcs7-mime
+#set smime_verify_opaque_command="openssl smime -verify -inform DER -in %s -CAfile /home/jpoly/.smime/IntralotOfficialCA.cer"
 #set pgp_sign_as="0xBD113717"
 #set pgp_timeout=1200
 #set pgp_autoinline=yes
@@ -169,13 +250,22 @@ bind index n           previous-unread
 bind index N           next-unread
 bind index,pager R     group-reply
 
+bind index \Cp sidebar-prev
+bind index \Cn sidebar-next
+bind index \Co sidebar-open
+bind pager \Cp sidebar-prev
+bind pager \Cn sidebar-next
+bind pager \Co sidebar-open
+
 # macros
 macro index B   "<limit>~b "                "search message bodies"
 macro index I   "<change-folder>!<enter>"   "go to Inbox"
 
 # quick-sync ~/Mail immediately with offlineimap
-macro index Z   "<shell-escape>/usr/bin/offlineimap -q -o<enter>" "sync IMAP"
+macro index,pager Z '<shell-escape>fetchmail -sk<enter>'
+#macro index Z   "<shell-escape>/usr/bin/offlineimap -q -o<enter>" "sync IMAP"
 
 # abbok stuff
 set query_command = "abook --mutt-query '%s'"
+macro index,pager A "<pipe-message>abook --add-email<return>" "add the sender address to abook"
 bind editor <Tab> complete-query

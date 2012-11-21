@@ -1,0 +1,38 @@
+[general]
+accounts = Gmail-tp24
+maxsyncaccounts = 1
+ui = quiet
+
+[Account Gmail-tp24]
+localrepository = Gmail-local
+remoterepository = Gmail-remote
+status_backend = sqlite
+autorefresh = 5
+quick = 10
+
+
+[Repository Gmail-local]
+# Currently, offlineimap only supports maildir and IMAP for local repositories.
+type = Maildir
+# Where should the mail be placed?
+localfolders = ~/.maildir
+
+[Repository Gmail-remote]
+type = Gmail
+remoteuser = gpolizoistp@gmail.com
+remotepass = mpe
+nametrans = lambda foldername: re.sub ('^\[gmail\]', 'bak',
+                               re.sub ('sent_mail', 'sent',
+                               re.sub ('starred', 'flagged',
+                               re.sub (' ', '_', foldername.lower()))))
+folderfilter = lambda foldername: foldername not in '[Gmail]/All Mail'
+sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+realdelete = yes
+
+[mbnames]
+enabled = yes
+filename = ~/.mutt/mailboxes
+header = "mailboxes "
+peritem = "+%(accountname)s/%(foldername)s"
+sep = " "
+footer = "\n"
