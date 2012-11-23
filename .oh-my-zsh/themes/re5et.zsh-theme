@@ -45,8 +45,8 @@ add-zsh-hook precmd prompt_jnrowe_precmd
 prompt_jnrowe_precmd() {
 	vcs_info
     dir_status="%{$(zsh_path)%}"
-	PROMPT='╭─%{$fg_bold[cyan]%}%n%{$reset_color%}%{$fg[yellow]%}@%{$reset_color%}%{$fg_bold[blue]%}%m%{$reset_color%}:%{${fg_bold[green]}%}(${dir_status})%{$reset_color%}${(e)PR_FILLBAR}─╮
-╰─%{${fg[$CARETCOLOR]}%}%# %{${reset_color}%}'
+	PROMPT='╭─%{$fg_bold[cyan]%}%n%{$reset_color%}%{$fg[yellow]%}@%{$reset_color%}%{$fg_bold[blue]%}%m%{$reset_color%}:(%{${fg_bold[green]}%}${dir_status})%{$reset_color%}${(e)PR_FILLBAR}─╮
+╰─%{${fg[$CARETCOLOR]}%}%#%{${reset_color}%} '
   if [ "${vcs_info_msg_0_}" = "" ]; then
 	RPS1='${return_code}─╯'
   elif [[ $(git diff --cached --name-status 2>/dev/null ) != "" ]]; then
