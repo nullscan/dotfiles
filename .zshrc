@@ -39,6 +39,37 @@ source /home/poly/.rvm/scripts/rvm
 vim_func() {
 	rxvt -geometry 182x70+0+0 -e vim "$@" &
 }
+
+16to2_func() {
+	echo "ibase=16;obase=2;$@" | bc
+}
+
+16to10_func() {
+	echo "ibase=16;obase=10;$@" | bc
+}
+
+10to2_func() {
+	echo "ibase=10;obase=2;$@" | bc
+}
+
+10to16_func() {
+	echo "ibase=10;obase=16;$@" | bc
+}
+
+2to10_func() {
+	echo "ibase=2;obase=10;$@" | bc
+}
+
+2to16_func() {
+	echo "ibase=2;obase=16;$@" | bc
+}
+
+alias 16to2='16to2_func'
+alias 16to10='16to10_func'
+alias 10to2='10to2_func'
+alias 10to16='10to16_func'
+alias 2to10='2to10_func'
+alias 2to16='2to16_func'
 alias vi='vim_func'
 alias ls='ls -h --color --time-style="+%d-%m-%Y %H:%M" --group-directories-first'
 
@@ -54,3 +85,4 @@ alias ls='ls -h --color --time-style="+%d-%m-%Y %H:%M" --group-directories-first
 export PATH=/home/poly/.rvm/gems/ruby-1.9.2-p320/bin:/home/poly/.rvm/gems/ruby-1.9.2-p320@global/bin:/home/poly/.rvm/rubies/ruby-1.9.2-p320/bin:/home/poly/.rvm/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:/junkyard/android-sdk/tools:/junkyard/android-sdk/platform-tools:/usr/games:/home/poly/proggies:/home/poly/.rvm/bin
 
 export EDITOR=vi
+export TERM=rxvt-256color
