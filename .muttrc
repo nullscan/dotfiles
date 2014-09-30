@@ -12,6 +12,8 @@ unset move
 set delete
 unset confirmappend
 unset mark_old
+set pipe_decode          # strip headers and eval mimes when piping
+set thorough_search
 # do not ask to recall postponed messages
 set recall=no
 
@@ -25,6 +27,7 @@ set sidebar_width=30
 # mail address alias
 set alias_file=~/.mutt/aliases
 source ~/.mutt/aliases
+set mailcap_path =~/.mutt/mailcap
 
 # beep on new mail
 set beep_new
@@ -40,6 +43,7 @@ auto_view application/html
 auto_view image/gif
 auto_view text/html
 auto_view image/jpg
+auto_view text/calendar
 alternative_order text/html text/plain *
 
 # make default search pattern to search in To, Cc and Subject
@@ -49,6 +53,7 @@ set simple_search="~f %s | ~C %s | ~s %s"
 set sort=threads
 set sort_aux = reverse-last-date-received
 set sort_re # thread based on reply_regexp
+set reply_regexp = "^(([Rr][Ee]?(\[[0-9]+\])?: *)?(\[[^]]+\] *)?)*"
 set strict_threads=yes
 
 # pager in mail view format
@@ -63,29 +68,46 @@ set tilde
 # no ugly plus signs
 unset markers
 
+set wait_key = no        # shut up, mutt
+
 set edit_headers=yes      # See the headers when editing
 
+#unset pop_delete
+#set pop_host = "mail.travelplanet24.com:110"
+#set pop_user = "gpolizois"
+#set pop_pass = "a$123456"
 # mailbox configuraton
-set mbox_type   = Maildir
-set folder      = "~/.maildir"
-set spoolfile   = "+inbox"
+#set mbox_type   = Maildir
+#set folder      = "~/.maildir"
+#set spoolfile   = "+INBOX"
+set imap_user = "youremail@wherever.org"
+set spoolfile = "imap://outlook.office365.com/INBOX"
+set folder = "imap://outlook.office365.com/"
+set trash = "imap://outlook.office365.com/Deleted Items"
+set record = "imap://outlook.office365.com/Sent Items"
+set postponed = "imap://outlook.office365.com/Drafts"
+set header_cache = "/home/poly/.mutt/header_cache"
+set message_cachedir = "/home/poly/.mutt/body_cache"
+set imap_check_subscribed=yes
+#set trash = "=Deleted Items"
 #set postponed   = "+postponed"
 #set record 		= "+sent"
 set move 		= no
 #unset record                            # required to prevent duplicates in Sent
-mailboxes ! +bak.sent +bak.trash +bak.spam
+#mailboxes ! +bak.sent +bak.trash +bak.spam
+mailboxes +INBOX +INBOX/monit +INBOX/munin +"Deleted Items"
 
 
 # mailboxes
 #mailboxes ! +sent
 #mailboxes +INBOX +sent +drafts
 
-folder-hook . 'unset trash'
-folder-hook . 'set trash="+bak.trash"'
+#folder-hook . 'unset trash'
+#folder-hook . 'set trash="+bak.trash"'
 # bindings
-macro index D "<save-message>+bak.trash<enter>"   "move message to the trash"
-macro index S "<save-message>+bak.spam<enter>"    "mark message as spam"
-macro index H "<save-message>+inbox<enter>"    "un-mark message as spam (move to inbox)"
+macro index D "<save-message>+Deleted\ Items<enter><sync-mailbox>"   "move message to the trash"
+#macro index S "<save-message>+bak.spam<enter>"    "mark message as spam"
+macro index H "<save-message>+INBOX<enter><sync-mailbox>"    "un-mark message as spam (move to inbox)"
 
 # composing mail
 # save attachments with the body
@@ -99,8 +121,11 @@ set mime_forward=yes
 set mime_forward_rest=yes
 
 # personality settings
-set realname = "Giannis Polyzois"
-set from = "ypolizois@travelplanet24.com"
+set realname = "Gandalf the grey"
+set from = "youremail@wherever.org"
+
+# email importance high, normal or low
+my_hdr Importance: normal
 
 #stuff to compose multipart/mixed mail for the corporate sigmanute shitty thing
 set editor="vim -c 'set tw=70 et' '+/^$' " 
@@ -134,6 +159,7 @@ color header		color83 	color237	"^(Cc|Bcc):"
 color header		color245	color237	"^(X-Original-To):"
 color header		color96		color237	"^(User-Agent|X-Editor|X-Mailer):"
 color header 		cyan		color237	"^Organization:"
+color header 		red 		color237 	"^Priority:"
 
 # gpg stuff
 color body       color188 color237 "^gpg: Good signature.*"
@@ -242,6 +268,13 @@ bind pager <up>        previous-line
 bind pager <down>      next-line
 bind pager gg          top
 bind pager G           bottom
+set pager_index_lines = 10 # number of index lines to show
+set pager_context = 3      # number of context lines to show
+set pager_stop             # don't go to next message automatically
+set menu_scroll            # scroll in menus
+set tilde                  # show tildes like in vim
+set quote_regexp = "^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+"
+set ispell="aspell -e -c"
 bind index gg          first-entry
 bind index G           last-entry
 bind pager N           previous-undeleted
@@ -249,17 +282,20 @@ bind pager n           next-undeleted
 bind index n           previous-unread
 bind index N           next-unread
 bind index,pager R     group-reply
+bind index <tab>    sync-mailbox
+bind index <space>  collapse-thread
 
-bind index \Cp sidebar-prev
-bind index \Cn sidebar-next
-bind index \Co sidebar-open
-bind pager \Cp sidebar-prev
-bind pager \Cn sidebar-next
-bind pager \Co sidebar-open
+bind index,pager \Cp sidebar-prev
+bind index,pager \Cn sidebar-next
+bind index,pager \Co sidebar-open
+bind attach <return> view-mailcap
 
 # macros
 macro index B   "<limit>~b "                "search message bodies"
 macro index I   "<change-folder>!<enter>"   "go to Inbox"
+#macro compose i \
+#		          "<filter-entry>newsbody -hqs -n - -p aspell check %f<enter>" \
+#				          "run aspell on the selected part"
 
 # quick-sync ~/Mail immediately with offlineimap
 macro index,pager Z '<shell-escape>fetchmail -sk<enter>'

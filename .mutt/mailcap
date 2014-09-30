@@ -1,0 +1,68 @@
+# MS Excel
+# this will use the default xls spreadsheet handler from open
+application/x-msexcel; /home/poly/.mutt/view_attachment.sh %s
+application/ms-exc; /home/poly/.mutt/view_attachment.sh %s
+application/excel; /home/poly/.mutt/view_attachment.sh %s
+application/msexcel; /home/poly/.mutt/view_attachment.sh %s
+application/vnd.ms-exc; /home/poly/.mutt/view_attachment.sh %s
+application/vnd.ms-excel; /home/poly/.mutt/view_attachment.sh %s
+
+# MS Word
+# use textedit to open .doc files as it's more light-weight
+application/msword; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lowriter'
+
+#
+# for Star/OpenOffice stuff, use NeoOffice/J
+#
+# Star/Open Office Writer
+application/vnd.sun.xml.writer; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lowriter'
+application/vnd.sun.xml.writer.global; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lowriter'
+application/vnd.stardivision.writer; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lowriter'
+application/vnd.stardivision.writer-global; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lowriter'
+application/x-starwriter; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lowriter'
+application/vnd.sun.xml.writer.template; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lowriter'
+application/vnd.oasis.opendocument.text; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lowriter'
+
+
+# Star/Open Office Calc
+application/vnd.sun.xml.calc; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/localc'
+application/vnd.stardivision.calc; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/localc'
+application/x-starcalc; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/localc'
+application/vnd.sun.xml.calc.template; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/localc'
+
+# Star/Open Office Draw
+application/vnd.sun.xml.draw; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lodraw'
+application/vnd.stardivision.draw; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lodraw'
+application/x-stardraw; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lodraw'
+application/vnd.sun.xml.draw.template; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lodraw'
+
+# Star/Open Office Math
+application/vnd.sun.xml.math; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lomath'
+application/vnd.stardivision.math; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lomath'
+application/x-starmath; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/lomath'
+
+# Star/Open Office Impress
+application/x-starimpress; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/loimpress'
+application/vnd.sun.xml.impress.template; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/loimpress'
+application/vnd.sun.xml.impress; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/loimpress'
+application/vnd.stardivision.impress; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/loimpress'
+application/vnd.stardivision.impress-packed; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/loimpress'
+
+# Images
+image/jpeg; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/feh'
+image/pjpeg; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/feh'
+image/png; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/feh'
+image/gif; /home/poly/.mutt/view_attachment.sh %s "-" '/usr/bin/feh'
+
+# PDF
+application/pdf; /home/poly/.mutt/view_attachment.sh %s "-" /usr/bin/acroread
+
+# HTML
+# -- always use lynx; it's gay to use chrome/firefox for this
+text/html; w3m -T text/html -F -dump %s; copiousoutput
+
+# Unidentified.
+application/octet-stream; /home/poly/.mutt/view_attachment.sh %s "-" 
+
+# meeting
+text/calendar;~/proggies/meeting.pl; copiousoutput;
