@@ -46,10 +46,16 @@ set viewoptions=folds,options,cursor,unix,slash
 set report=0 					" always report how many lines are changed
 set autochdir 					" automaticaly chdir of vim path to the file open in buffer
 
+
+set rtp+=/usr/lib/python3/dist-packages/powerline/bindings/vim/
+set t_Co=256
+set laststatus=2
+let g:Powerline_symbols = "fancy"
+
 " Enable built in useful options
 syntax on	" syntax highlighing
 filetype plugin indent on	" enable filetype detection
-
+au BufNewFile,BufRead *.j2 set ft=jinja
 " let Tlist_Exit_OnlyWindow = 1
 let g:tagbar_left = 1
 let g:tagbar_usearrows = 1
@@ -61,6 +67,14 @@ au BufRead *.cpp,*.c,*.h set statusline=\ %f%m%r%h%w\ \in\ \%{CurDir()}\ %{ShowF
 autocmd FileType cpp,c,h TagbarOpen
 set statusline=\ %f%m%r%h%w\ \in\ \%{CurDir()}\ %=%([%{&ff}\|%{(&fenc==\"\"?&enc:&fenc).((exists(\"+bomb\")\ &&\ &bomb)?\",B\":\"\")}%k\|%Y]%)\ %([%04.4l\ \(of\ \%04.4L),%-03.3v][%p%%]\ \ASCII=%-04.4b\ HEX=0x%-04.4B\%)
 
+call plug#begin()
+Plug 'pearofducks/ansible-vim'
+call plug#end()
+
+filetype off
+let &runtimepath.=',~/.vim/bundle/ale'
+filetype plugin on
+
 function! ShowFuncName()
 	let lnum = line(".")
 	let col = col(".")
@@ -70,7 +84,7 @@ function! ShowFuncName()
 endfunction
 
 function! CurDir()
-    let curdir = substitute(getcwd(), '/home/jpoly/', "~/", "g")
+    let curdir = substitute(getcwd(), '/home/poly/', "~/", "g")
     return curdir
 endfunction
 
@@ -158,6 +172,7 @@ if has("autocmd")
    " File formats
    au BufNewFile,BufRead	*.pls			set syntax=dosini
    au BufNewFile,BufRead	modprobe.conf	set syntax=modconf
+   au BufNewFile,BufRead	*.j2	set ft=jinja
 endif
 
 "Uncomment if you want diffrent statusline colors for normal and edit modes
@@ -226,4 +241,4 @@ au BufWritePre ?* mkview
 au BufWritePost ?* silent loadview
 au BufReadPost ?* silent loadview
 
-source /usr/share/vim/vimcurrent/ftplugin/man.vim
+" source /usr/share/vim/vimcurrent/ftplugin/man.vim
